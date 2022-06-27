@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { timeZone, TimeZones } from '../constants/timeZones';
+import { DEFAULT_TIMEZONE, timeZone, TimeZones } from '../constants/timeZones';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { useClockContext } from '../providers/clock';
 
 interface Props {
     children?: React.ReactNode;
@@ -31,7 +32,8 @@ const OptionsContainer = styled.div`
         display: none;
     }
     position: absolute;
-    background: white;
+    background-color: ${({theme}) => theme.app.body.normal.BG_COLOR};
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
     padding: 7px;
     width: 150px;
     left: 50%;
@@ -62,6 +64,7 @@ const StyledSelect = styled(Select)`
         display: flex;
         justify-content: center;
         align-items: center;
+        color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
         > svg {
             display: none;
             transform: rotateZ(90deg);
@@ -80,6 +83,7 @@ interface CitySelectorProps {
 }
 
 export const CitySelector: FunctionComponent<CitySelectorProps> = ({value, onSelect, ...others}) => {
+    const { store } = useClockContext();
     const tzs = Object.keys(TimeZones);
     const [city, setCity] = React.useState(tzs[0]);
 
@@ -89,10 +93,10 @@ export const CitySelector: FunctionComponent<CitySelectorProps> = ({value, onSel
     }
 
     return (
-        <StyledSelect value={city.split('/')[1]} {...others}>
-            {tzs.filter((tz) => tz !== city).map((k, i) => {
+        <StyledSelect value={city.split('/')[1].replace('_', ' ')} {...others}>
+            {tzs.filter((tz) => tz !== city && store.clocks.findIndex(({ timeZone, editMode }) => tz === timeZone && !editMode) === -1 && tz !== DEFAULT_TIMEZONE).map((k, i) => {
                 return (
-                    <Item key={i} onClick={handleSelect(k as timeZone)}>{k.split('/')[1]}</Item>
+                    <Item key={i} onClick={handleSelect(k as timeZone)}>{k.split('/')[1].replace('_', ' ')}</Item>
                 )
             })}
         </StyledSelect>

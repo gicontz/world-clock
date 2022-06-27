@@ -2,6 +2,8 @@ import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
 import { setDateTime } from '../modules/clock/actions';
 import { useClockContext } from '../providers/clock';
+import { convertDateTime } from '../helpers/time';
+import { DEFAULT_TIMEZONE } from '../constants/timeZones';
 
 const Container = styled.div`
     display: flex;
@@ -16,17 +18,20 @@ const Container = styled.div`
 const City = styled.p`
     margin: 0;
     font-size: 2em;
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
 `;
 
 const Time = styled.h1`
     margin: 0;
     margin-top: 10px;
     font-size: 5em;
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
 `;
 
 
 const MainClock: FunctionComponent = () => {
     const { store, dispatch } = useClockContext();
+    const { shownTime } = convertDateTime(store.dateTime, DEFAULT_TIMEZONE);
 
     useEffect(() => {
         const handleTime = () => {
@@ -38,7 +43,7 @@ const MainClock: FunctionComponent = () => {
     return (
         <Container>
             <City>Manila</City>
-            <Time>{`${("0" + store.dateTime.getHours()).slice(-2)}:${("0" + store.dateTime.getMinutes()).slice(-2)}`}</Time>
+            <Time>{shownTime}</Time>
         </Container>
     )
 }

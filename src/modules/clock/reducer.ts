@@ -55,6 +55,18 @@ export function clock(state = defaultState.store, action: ClockTypes): ClockStat
                 }
             })
         }
+        case Actions.GET_TIME_ZONES: {
+            return {
+                ...state,
+                timeZones: action.payload,
+            }
+        }
+        case Actions.SET_THEME: {
+            return {
+                ...state,
+                theme: action.payload,
+            }
+        }
         default: 
             return state;
     }

@@ -1,5 +1,6 @@
 export type timeZone = 
     | 'Asia/Singapore'
+    | 'Asia/Manila'
     | 'Asia/Tokyo'
     | 'Asia/Seoul'
     | 'Australia/Melbourne'
@@ -7,14 +8,21 @@ export type timeZone =
     | 'Europe/London'
     | 'Europe/Paris'
     | 'Europe/Berlin'
-    | 'America/New York'
-    | 'America/Los Angeles';
+    | 'America/New_York'
+    | 'America/Los_Angeles';
 
-export const TimeZones: Record<timeZone, { offset: number, timeZone: string, abbrev: string }> = {
+export type TTimeZonelist = Record<timeZone, { offset: number, timeZone: string, abbrev: string }>;
+
+export const TimeZones: TTimeZonelist = {
     'Asia/Singapore': {
         offset: 480,
         timeZone: 'GMT+8',
-        abbrev: 'SST'
+        abbrev: '+08'
+    },
+    'Asia/Manila': {
+        offset: 480,
+        timeZone: 'GMT+8',
+        abbrev: 'PST'
     },
     'Asia/Tokyo':  {
         offset: 540,
@@ -51,14 +59,16 @@ export const TimeZones: Record<timeZone, { offset: number, timeZone: string, abb
         timeZone: 'GMT+2',
         abbrev: 'CEST'
     },
-    'America/New York':  {
+    'America/New_York':  {
         offset: -240,
         timeZone: 'GMT-4',
         abbrev: 'EDT'
     },
-    'America/Los Angeles':  {
+    'America/Los_Angeles':  {
         offset: -420,
         timeZone: 'GMT-7',
         abbrev: 'PDT'
     },
 };
+
+export const DEFAULT_TIMEZONE: timeZone = 'Asia/Manila';

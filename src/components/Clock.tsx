@@ -8,6 +8,7 @@ import { CitySelector } from './Select';
 import { createClock, deleteClock, setupClock } from '../modules/clock/actions';
 import { ClockPosition } from '../modules/clock/types';
 import { Button } from './Button';
+import { convertDateTime } from '../helpers/time';
 
 interface Props {
     timeZone?: TTimeZone;
@@ -18,9 +19,9 @@ interface Props {
 const ClockContainer = styled.div<{ timeZone?: TTimeZone }>`
     display: flex;
     width: 100%;
-    background-color: white;
+    background-color: ${({theme}) => theme.app.body.normal.BG_COLOR};
     cursor: ${({timeZone}) => timeZone ? 'grab' : 'pointer'};
-    border: 1px solid;
+    border: 1px solid ${({theme}) => theme.app.body.normal.BORDER_COLOR};
 `;
 
 const NewContainer = styled.div`
@@ -28,7 +29,7 @@ const NewContainer = styled.div`
     width: 100%;
     align-items: center;
     justify-content: center;
-    background-color: white;
+    background-color: ${({theme}) => theme.app.body.normal.BG_COLOR};
 `;
 
 const Container = styled.div`
@@ -44,6 +45,7 @@ const City = styled.p`
     font-weight: bold;
     font-size: 1.5em;
     text-align: center;
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
 `;
 
 const Time = styled.h3`
@@ -51,10 +53,12 @@ const Time = styled.h3`
     font-weight: bold;
     font-size: 3em;
     text-align: center;
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
 `;
 
 const Desc = styled.div`
     > p {
+        color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
         text-align: center;
     }
 `;
@@ -69,14 +73,13 @@ const StyledDeleteIcon = styled(ClearIcon)`
     }
 `;
 
+const StyledAddIcon =  styled(AddIcon)`
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
+`;
+
 const Timer: FunctionComponent<Required<Props>> = ({ timeZone, position, editMode }) => {
     const [tz, setTz] = React.useState(timeZone);
     const { store, dispatch } = useClockContext();
-    const utcTime = store.dateTime.getTime() + (store.dateTime.getTimezoneOffset() * 60000);
-    const convertedDate = new Date(utcTime + (TimeZones[tz].offset * 60000));
-    const shownTime = `${("0" + convertedDate.getHours()).slice(-2)}:${("0" + convertedDate.getMinutes()).slice(-2)}`;
-    const timeDiff = (store.dateTime.getTimezoneOffset() + TimeZones[tz].offset)/60;
-    const absoluteHrs = Math.abs(timeDiff);
 
     const handleChangeTimeZone = (data: TTimeZone) => {
         setTz(data);
@@ -86,12 +89,14 @@ const Timer: FunctionComponent<Required<Props>> = ({ timeZone, position, editMod
         createClock({ timeZone: tz, position }, dispatch);
     }
 
+    const { shownTime, timeDiff, absoluteHrs } = convertDateTime(store.dateTime, tz, store.timeZones);
+
     return (
         <Container>
-            {editMode ? <CitySelector onSelect={handleChangeTimeZone}/> : <City>{tz.split('/')[1]}</City>}
+            {editMode ? <CitySelector onSelect={handleChangeTimeZone}/> : <City>{tz.split('/')[1].replace('_', ' ')}</City>}
             <Time>{shownTime}</Time>
             <Desc>
-                <p>{TimeZones[tz].abbrev}</p>
+                <p>{(store.timeZones || TimeZones)[tz].abbrev}</p>
                 <p>{timeDiff === 0 ? '' : Math.abs(timeDiff) > 1 ? `${absoluteHrs} hours` : `${absoluteHrs} hour`} {timeDiff === 0 ? 'Same as' : timeDiff > 0 ? 'ahead' : 'behind'} Manila</p>
             </Desc>
             {editMode && <Button onClick={handleCreate}>SAVE</Button>}
@@ -115,7 +120,7 @@ const Clock: ForwardRefExoticComponent<Props> = React.forwardRef(({ timeZone, po
         <ClockContainer ref={ref as React.RefObject<HTMLDivElement>} {...others}>
             { timeZone ? <Timer timeZone={timeZone} editMode={editMode || false} position={position} /> : 
                 <NewContainer onClick={handleNewClock}>
-                    <AddIcon />
+                    <StyledAddIcon />
                 </NewContainer>
             }
             { timeZone && <StyledDeleteIcon onClick={handleDelete} /> }
