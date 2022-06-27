@@ -23,7 +23,7 @@ const Container = styled.div`
 
 const MainView: FunctionComponent = ({...others}) => {
     const { store, dispatch } = useClockContext();
-    const [isDarkMode, setDarkMode] = React.useState(store.theme == 'dark');
+    const [isDarkMode, setDarkMode] = React.useState(store.theme === 'dark');
   
     const toggleDarkMode = (checked: boolean) => {
       setDarkMode(checked);
@@ -43,14 +43,14 @@ const MainView: FunctionComponent = ({...others}) => {
     const handleLayoutChange = (layout: Layout[]) => {
         changeLayout(layout, dispatch);
     }
-    console.log(store);
+    
     useEffect(() => {
         getAllTimeZones(dispatch);
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     // if (store.clocks) cookies.set(CLOCKS_COOKIE_KEY, store.clocks);
-    // }, [store.clocks]);
+    useEffect(() => {
+        if (store.clocks) cookies.set(CLOCKS_COOKIE_KEY, store.clocks);
+    }, [store.clocks]);
 
     return (
         <Container>

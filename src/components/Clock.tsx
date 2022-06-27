@@ -71,6 +71,7 @@ const StyledDeleteIcon = styled(ClearIcon)`
     &:hover {
         opacity: 1;
     }
+    color: ${({theme}) => theme.app.body.normal.TEXT_COLOR};
 `;
 
 const StyledAddIcon =  styled(AddIcon)`

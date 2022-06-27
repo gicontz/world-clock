@@ -10,7 +10,7 @@ const Root: FunctionComponent = () => {
 
   return (
       <ClockProvider.Provider value={{ store, dispatch }}>
-        <ThemeProvider theme={store.theme == 'dark' ? themes.dark : themes.default}>
+        <ThemeProvider theme={store.theme === 'dark' ? themes.dark : themes.default}>
           <MainView />
         </ThemeProvider>
       </ClockProvider.Provider>
